@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advanced Health Monitoring System</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -47,13 +48,13 @@
       font-size: 0.95rem;
       color: #cbd5e1;
     }
-    section.contact {
+    section.contact, section.live-data {
       margin-top: 3rem;
-      max-width: 600px;
+      max-width: 800px;
       margin-left: auto;
       margin-right: auto;
     }
-    section.contact h2 {
+    section.contact h2, section.live-data h2 {
       text-align: center;
       font-size: 1.5rem;
       margin-bottom: 1rem;
@@ -82,18 +83,30 @@
     button:hover {
       background-color: #0ea5e9;
     }
-    section.live-data {
-      margin-top: 3rem;
-      text-align: center;
-    }
-    section.live-data h2 {
-      font-size: 1.5rem;
-      color: #38bdf8;
-      margin-bottom: 1rem;
-    }
     .data {
       font-size: 1.25rem;
       color: #cbd5e1;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .metric-boxes {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+      gap: 1rem;
+    }
+    .metric-box {
+      background: #1e293b;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      flex: 1;
+    }
+    canvas {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 2rem;
     }
     footer {
       margin-top: 3rem;
@@ -138,7 +151,21 @@
 
   <section class="live-data">
     <h2>📡 Live Health Data</h2>
-    <div class="data" id="liveData">Loading data...</div>
+    <div class="metric-boxes">
+      <div class="metric-box">
+        <h3>Heart Rate</h3>
+        <p id="bpm">-- BPM</p>
+      </div>
+      <div class="metric-box">
+        <h3>Temperature</h3>
+        <p id="temp">-- °C</p>
+      </div>
+      <div class="metric-box">
+        <h3>SpO₂</h3>
+        <p id="spo2">-- %</p>
+      </div>
+    </div>
+    <canvas id="vitalChart" height="100"></canvas>
   </section>
 
   <section class="contact">
@@ -156,19 +183,54 @@
   </footer>
 
   <script>
-    // Mocked live data update
+    let heartRateData = [], tempData = [], spo2Data = [], labels = [];
+    const bpmEl = document.getElementById("bpm");
+    const tempEl = document.getElementById("temp");
+    const spo2El = document.getElementById("spo2");
+    const chart = new Chart(document.getElementById("vitalChart"), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Heart Rate (BPM)', data: heartRateData, borderColor: '#ef4444', fill: false },
+          { label: 'Temp (°C)', data: tempData, borderColor: '#facc15', fill: false },
+          { label: 'SpO₂ (%)', data: spo2Data, borderColor: '#22c55e', fill: false }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: false } },
+        plugins: { legend: { labels: { color: '#cbd5e1' } } }
+      }
+    });
+
     function updateLiveData() {
       const heartRate = Math.floor(Math.random() * (100 - 60) + 60);
       const temperature = (36 + Math.random()).toFixed(1);
       const spo2 = Math.floor(Math.random() * (100 - 95) + 95);
-      document.getElementById("liveData").innerText = `Heart Rate: ${heartRate} BPM | Temp: ${temperature} °C | SpO2: ${spo2}%`;
+      const timestamp = new Date().toLocaleTimeString();
+
+      bpmEl.innerText = `${heartRate} BPM`;
+      tempEl.innerText = `${temperature} °C`;
+      spo2El.innerText = `${spo2} %`;
+
+      if (labels.length >= 10) {
+        labels.shift();
+        heartRateData.shift();
+        tempData.shift();
+        spo2Data.shift();
+      }
+      labels.push(timestamp);
+      heartRateData.push(heartRate);
+      tempData.push(temperature);
+      spo2Data.push(spo2);
+      chart.update();
     }
     setInterval(updateLiveData, 3000);
 
-    // Handle contact form
     function submitForm(e) {
       e.preventDefault();
-      alert("Thank you! Your message has been submitted.");
+      alert("✅ Thank you! Your message has been submitted.");
     }
   </script>
 </body>
