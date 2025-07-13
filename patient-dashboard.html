@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <div style="text-align:center;">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=random" alt="avatar" style="border-radius:50%; width:80px; height:80px;"/>
+      <h1>Welcome, Patient</h1>
+    </div>
+    <div id="mydata">
+      <p>Heart Rate: <span id="hr"></span> bpm</p>
+      <p>Temperature: <span id="temp"></span> °C</p>
+    </div>
+
+    <div id="chart-container" style="margin-top: 2em;">
+      <canvas id="hrChart" height="100"></canvas>
+      <canvas id="tempChart" height="100" style="margin-top: 1em;"></canvas>
+    </div>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+  <script src="chart-script.js"></script>
+</body>
+</html>
