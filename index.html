@@ -1,237 +1,34 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Advanced Health Monitoring System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Login | Health Monitor</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #0f172a;
-      color: #e2e8f0;
-      padding: 2rem;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    header h1 {
-      font-size: 2.5rem;
-      color: #38bdf8;
-    }
-    section.features {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
       display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
       justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    .card {
+    .login-box {
       background: #1e293b;
-      border: 1px solid #334155;
-      padding: 1.5rem;
+      padding: 2rem;
       border-radius: 12px;
-      width: 280px;
-      transition: transform 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      width: 300px;
+      animation: slideUp 0.6s ease-in-out;
     }
-    .card:hover {
-      transform: translateY(-5px);
-    }
-    .card h2 {
+    h2 {
       color: #22d3ee;
-      margin-bottom: 0.5rem;
-      font-size: 1.25rem;
-    }
-    .card p {
-      font-size: 0.95rem;
-      color: #cbd5e1;
-    }
-    section.contact, section.live-data {
-      margin-top: 3rem;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    section.contact h2, section.live-data h2 {
       text-align: center;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #38bdf8;
     }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    input, textarea {
+    input, select {
+      width: 100%;
       padding: 0.75rem;
-      border-radius: 6px;
-      border: none;
-      font-size: 1rem;
-    }
-    button {
-      background-color: #22d3ee;
-      color: #0f172a;
-      border: none;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0ea5e9;
-    }
-    .data {
-      font-size: 1.25rem;
-      color: #cbd5e1;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    .metric-boxes {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 1rem;
-      gap: 1rem;
-    }
-    .metric-box {
-      background: #1e293b;
-      padding: 1rem;
-      border-radius: 8px;
-      text-align: center;
-      flex: 1;
-    }
-    canvas {
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 1rem;
-      margin-top: 2rem;
-    }
-    footer {
-      margin-top: 3rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #64748b;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Advanced Health Monitoring System</h1>
-    <p>Track your health metrics in real time — anytime, anywhere.</p>
-  </header>
-
-  <section class="features">
-    <div class="card">
-      <h2>📊 Real-time Vitals</h2>
-      <p>Continuously monitor heart rate, temperature, and oxygen levels with high precision sensors.</p>
-    </div>
-    <div class="card">
-      <h2>☁️ Cloud Dashboard</h2>
-      <p>Access your health history and analytics securely from any device through our cloud-based portal.</p>
-    </div>
-    <div class="card">
-      <h2>🚨 Emergency Alerts</h2>
-      <p>Instant notifications to doctors or family when abnormal health readings are detected.</p>
-    </div>
-    <div class="card">
-      <h2>📱 Mobile Compatible</h2>
-      <p>Monitor your vitals on the go using our intuitive mobile app available on Android and iOS.</p>
-    </div>
-    <div class="card">
-      <h2>🔐 Data Privacy</h2>
-      <p>We implement end-to-end encryption to ensure your health data is private and secure.</p>
-    </div>
-    <div class="card">
-      <h2>🧠 AI Predictions</h2>
-      <p>AI-driven health forecasts help detect early warning signs and offer personalized advice.</p>
-    </div>
-  </section>
-
-  <section class="live-data">
-    <h2>📡 Live Health Data</h2>
-    <div class="metric-boxes">
-      <div class="metric-box">
-        <h3>Heart Rate</h3>
-        <p id="bpm">-- BPM</p>
-      </div>
-      <div class="metric-box">
-        <h3>Temperature</h3>
-        <p id="temp">-- °C</p>
-      </div>
-      <div class="metric-box">
-        <h3>SpO₂</h3>
-        <p id="spo2">-- %</p>
-      </div>
-    </div>
-    <canvas id="vitalChart" height="100"></canvas>
-  </section>
-
-  <section class="contact">
-    <h2>📬 Contact Us</h2>
-    <form onsubmit="submitForm(event)">
-      <input type="text" placeholder="Your Name" required />
-      <input type="email" placeholder="Your Email" required />
-      <textarea rows="4" placeholder="Your Message" required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 Advanced Health Monitoring | All rights reserved.</p>
-  </footer>
-
-  <script>
-    let heartRateData = [], tempData = [], spo2Data = [], labels = [];
-    const bpmEl = document.getElementById("bpm");
-    const tempEl = document.getElementById("temp");
-    const spo2El = document.getElementById("spo2");
-    const chart = new Chart(document.getElementById("vitalChart"), {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          { label: 'Heart Rate (BPM)', data: heartRateData, borderColor: '#ef4444', fill: false },
-          { label: 'Temp (°C)', data: tempData, borderColor: '#facc15', fill: false },
-          { label: 'SpO₂ (%)', data: spo2Data, borderColor: '#22c55e', fill: false }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: { y: { beginAtZero: false } },
-        plugins: { legend: { labels: { color: '#cbd5e1' } } }
-      }
-    });
-
-    function updateLiveData() {
-      const heartRate = Math.floor(Math.random() * (100 - 60) + 60);
-      const temperature = (36 + Math.random()).toFixed(1);
-      const spo2 = Math.floor(Math.random() * (100 - 95) + 95);
-      const timestamp = new Date().toLocaleTimeString();
-
-      bpmEl.innerText = `${heartRate} BPM`;
-      tempEl.innerText = `${temperature} °C`;
-      spo2El.innerText = `${spo2} %`;
-
-      if (labels.length >= 10) {
-        labels.shift();
-        heartRateData.shift();
-        tempData.shift();
-        spo2Data.shift();
-      }
-      labels.push(timestamp);
-      heartRateData.push(heartRate);
-      tempData.push(temperature);
-      spo2Data.push(spo2);
-      chart.update();
-    }
-    setInterval(updateLiveData, 3000);
-
-    function submitForm(e) {
-      e.preventDefault();
-      alert("✅ Thank you! Your message has been submitted.");
-    }
-  </script>
-</body>
-</html>
+      margin: 1rem
