@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #111;
+  color: #fff;
+}
+
+.home {
+  text-align: center;
+  margin-top: 10vh;
+}
+
+.home h1 {
+  font-size: 3em;
+  animation: fadeIn 2s;
+}
+
+.buttons .btn {
+  background: #00ff99;
+  padding: 12px 25px;
+  text-decoration: none;
+  border-radius: 8px;
+  color: #000;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #00cc88;
+}
+
+.login-box, .dashboard {
+  max-width: 400px;
+  margin: auto;
+  padding: 2em;
+  background: #222;
+  border-radius: 10px;
+  animation: slideIn 1s;
+}
+
+input, select {
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+}
+
+button {
+  width: 100%;
+  background: #00ff99;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  margin-top: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(50px);}
+  to { opacity: 1; transform: translateY(0);}
+}
