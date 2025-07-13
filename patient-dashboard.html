@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard</title>
+  <style>
+    body {
+      background: #0f172a;
+      font-family: 'Segoe UI', sans-serif;
+      color: #f8fafc;
+      padding: 2rem;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    h1 { color: #34d399; margin-bottom: 2rem; font-size: 2.2rem; }
+    .card {
+      background: #1e293b;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin: auto;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+    .metric { font-size: 1.2rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>👤 Patient Dashboard</h1>
+  <div class="card" id="patientData">
+    <div class="metric">Heart Rate: <span id="heartRate">--</span> bpm</div>
+    <div class="metric">Temperature: <span id="temperature">--</span> °C</div>
+    <div class="metric">SpO₂: <span id="spo2">--</span> %</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOM_spILQCHct54yzNHWIVsZRdT4xCVfc",
+      authDomain: "health-monitor-f5b96.firebaseapp.com",
+      databaseURL: "https://health-monitor-f5b96-default-rtdb.firebaseio.com",
+      projectId: "health-monitor-f5b96",
+      storageBucket: "health-monitor-f5b96.appspot.com",
+      messagingSenderId: "84125754587",
+      appId: "1:84125754587:web:6f0df57f57afe0931918fe"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    window.addEventListener('load', () => {
+      auth.onAuthStateChanged(user => {
+        if (!user) return location.href = 'index.html';
+        db.ref(`users/${user.uid}/role`).once('value').then(snap => {
+          if (snap.val() !== 'patient') return location.href = 'index.html';
+          db.ref(`patients/${user.uid}`).on('value', snap => {
+            const data = snap.val() || {};
+            document.getElementById('heartRate').innerText = data.heartRate ?? '--';
+            document.getElementById('temperature').innerText = data.temperature ?? '--';
+            document.getElementById('spo2').innerText = data.spo2 ?? '--';
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
