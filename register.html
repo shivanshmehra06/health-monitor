@@ -1,0 +1,97 @@
+<!-- ✅ Register.html with Firebase integration and role selection -->
+<!DOCTYPE html>
+<html lang="en" style="font-size: 16px;">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="css/nicepage.css" />
+    <link rel="stylesheet" href="css/Register.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="auth/auth.js" defer></script>
+  </head>
+  <body class="u-body u-clearfix u-xl-mode" data-lang="en">
+    <section class="u-clearfix u-gradient u-section-1">
+      <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+        <div class="u-expanded-width u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout">
+            <div class="u-layout-row">
+              <div class="u-container-style u-layout-cell u-radius-40 u-shape-round u-size-30 u-layout-cell-1">
+                <div class="u-container-layout u-container-layout-1">
+                  <h2 class="u-text u-text-default u-text-1">Register Now!</h2>
+                  <p class="u-text u-text-default u-text-2">Already have an account?</p>
+                  <p class="u-text u-text-custom-color-1 u-text-default u-text-3">
+                    <a class="u-btn u-button-link u-none u-text-palette-1-base u-btn-1" href="Login.html">Click here</a>
+                  </p>
+                </div>
+              </div>
+              <div class="u-container-style u-layout-cell u-radius-40 u-size-30 u-layout-cell-2">
+                <div class="u-container-layout u-valign-top u-container-layout-2">
+                  <form id="registerForm" class="u-form u-form-1">
+                    <div class="u-form-group">
+                      <label for="email">Email</label>
+                      <input type="email" placeholder="Enter your email" id="email" required class="u-input u-input-3" />
+                    </div>
+                    <div class="u-form-group">
+                      <label for="password">Password</label>
+                      <input type="password" placeholder="Enter password" id="password" required class="u-input u-input-4" />
+                    </div>
+                    <div class="u-form-group">
+                      <label for="confirmPassword">Confirm Password</label>
+                      <input type="password" placeholder="Confirm password" id="confirmPassword" required class="u-input u-input-4" />
+                    </div>
+                    <div class="u-form-group">
+                      <label for="role">Select Role</label>
+                      <select id="role" class="u-input u-input-4">
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>
+                      </select>
+                    </div>
+                    <div class="u-form-group u-form-submit">
+                      <button type="submit" class="u-btn u-btn-submit u-button-style">Register</button>
+                    </div>
+                    <div id="registerError" style="color:red;"></div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script type="module">
+      import { auth, database } from "./js/firebase-config.js";
+      import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+      import { ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+      document.getElementById("registerForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = email.value.trim();
+        const password = password.value.trim();
+        const confirmPassword = confirmPassword.value.trim();
+        const role = role.value;
+
+        if (password !== confirmPassword) {
+          document.getElementById("registerError").innerText = "Passwords do not match!";
+          return;
+        }
+
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const userId = userCredential.user.uid;
+          await set(ref(database, 'users/' + userId), {
+            email: email,
+            role: role
+          });
+          alert("Registration successful!");
+          window.location.href = "Login.html";
+        } catch (error) {
+          document.getElementById("registerError").innerText = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>
