@@ -1,0 +1,95 @@
+<!-- ✅ doctor-dashboard.html with Firebase + Patient Data Table + Graphs -->
+<!DOCTYPE html>
+<html lang="en" style="font-size: 16px;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard</title>
+  <link rel="stylesheet" href="../css/nicepage.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <script type="module" src="../js/firebase-config.js"></script>
+</head>
+<body class="u-body u-xl-mode">
+  <section class="u-section">
+    <div class="u-sheet u-valign-top">
+      <h2>Doctor Dashboard</h2>
+      <p>All registered patients with real-time data.</p>
+      <div id="patientList"></div>
+      <canvas id="vitalsChart" width="400" height="200"></canvas>
+    </div>
+  </section>
+
+  <script type="module">
+    import { database } from '../js/firebase-config.js';
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const patientListDiv = document.getElementById("patientList");
+    const chartCtx = document.getElementById("vitalsChart").getContext('2d');
+    let vitalsChart;
+
+    const usersRef = ref(database, 'users');
+    onValue(usersRef, (snapshot) => {
+      const users = snapshot.val();
+      patientListDiv.innerHTML = '';
+
+      for (const userId in users) {
+        if (users[userId].role === 'patient') {
+          const card = document.createElement('div');
+          card.style.padding = '10px';
+          card.style.border = '1px solid #ccc';
+          card.style.marginBottom = '10px';
+
+          const name = users[userId].email;
+          card.innerHTML = `<strong>${name}</strong><br>Loading vitals...`;
+          patientListDiv.appendChild(card);
+
+          const vitalsRef = ref(database, `vitals/${userId}`);
+          onValue(vitalsRef, (vitalSnap) => {
+            const vitals = vitalSnap.val();
+            if (vitals) {
+              const latest = Object.values(vitals).slice(-1)[0];
+              card.innerHTML = `
+                <strong>${name}</strong><br>
+                Heart Rate: ${latest.heartRate} bpm<br>
+                SpO2: ${latest.spo2}%<br>
+                Temperature: ${latest.temperature} °C
+              `;
+
+              // Update chart
+              vitalsChart?.destroy();
+              vitalsChart = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                  labels: Object.keys(vitals).map(t => new Date(t).toLocaleTimeString()),
+                  datasets: [
+                    {
+                      label: 'Heart Rate',
+                      data: Object.values(vitals).map(v => v.heartRate),
+                      borderColor: 'red',
+                      fill: false,
+                    },
+                    {
+                      label: 'SpO2',
+                      data: Object.values(vitals).map(v => v.spo2),
+                      borderColor: 'blue',
+                      fill: false,
+                    },
+                    {
+                      label: 'Temperature',
+                      data: Object.values(vitals).map(v => v.temperature),
+                      borderColor: 'green',
+                      fill: false,
+                    },
+                  ]
+                },
+              });
+            }
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
