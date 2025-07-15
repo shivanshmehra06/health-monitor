@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.u-btn {
+  font-size: 16px;
+  padding: 10px 24px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  background-color: #1cc4e8;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.u-btn:hover {
+  background-color: #0aa3c3;
+}
+
+.u-section {
+  padding: 60px 20px;
+}
+
+.u-sheet {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+canvas {
+  max-width: 100%;
+  margin-top: 30px;
+}
