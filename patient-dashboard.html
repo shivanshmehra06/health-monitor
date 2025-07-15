@@ -1,0 +1,88 @@
+<!-- ✅ patient-dashboard.html with personal vitals and graphs -->
+<!DOCTYPE html>
+<html lang="en" style="font-size: 16px;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="../css/nicepage.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <script type="module" src="../js/firebase-config.js"></script>
+</head>
+<body class="u-body u-xl-mode">
+  <section class="u-section">
+    <div class="u-sheet u-valign-top">
+      <h2>Welcome, Patient</h2>
+      <p>Your real-time health vitals</p>
+      <div id="latestVitals"></div>
+      <canvas id="patientChart" width="400" height="200"></canvas>
+    </div>
+  </section>
+
+  <script type="module">
+    import { auth, database } from '../js/firebase-config.js';
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+    const latestVitalsDiv = document.getElementById("latestVitals");
+    const chartCtx = document.getElementById("patientChart").getContext("2d");
+    let patientChart;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        const vitalsRef = ref(database, `vitals/${uid}`);
+
+        onValue(vitalsRef, (snapshot) => {
+          const vitals = snapshot.val();
+          if (vitals) {
+            const timestamps = Object.keys(vitals);
+            const dataPoints = Object.values(vitals);
+            const latest = dataPoints.slice(-1)[0];
+
+            latestVitalsDiv.innerHTML = `
+              <strong>Latest Readings:</strong><br>
+              Heart Rate: ${latest.heartRate} bpm<br>
+              SpO2: ${latest.spo2}%<br>
+              Temperature: ${latest.temperature} °C
+            `;
+
+            patientChart?.destroy();
+            patientChart = new Chart(chartCtx, {
+              type: 'line',
+              data: {
+                labels: timestamps.map(t => new Date(t).toLocaleTimeString()),
+                datasets: [
+                  {
+                    label: 'Heart Rate',
+                    data: dataPoints.map(v => v.heartRate),
+                    borderColor: 'red',
+                    fill: false,
+                  },
+                  {
+                    label: 'SpO2',
+                    data: dataPoints.map(v => v.spo2),
+                    borderColor: 'blue',
+                    fill: false,
+                  },
+                  {
+                    label: 'Temperature',
+                    data: dataPoints.map(v => v.temperature),
+                    borderColor: 'green',
+                    fill: false,
+                  },
+                ]
+              },
+            });
+          }
+        });
+      } else {
+        window.location.href = '../Login.html';
+      }
+    });
+  </script>
+</body>
+</html>
