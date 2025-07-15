@@ -1,0 +1,16 @@
+.u-text-1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.u-text-2 {
+  font-size: 20px;
+  margin-bottom: 40px;
+}
+
+.u-btn-1, .u-btn-2 {
+  margin-right: 20px;
+  font-size: 18px;
+}
